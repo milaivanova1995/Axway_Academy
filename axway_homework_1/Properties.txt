@@ -1,2 +1,4 @@
 Mila = Janette
 Filip = Dimitros
+stable = 
+badass = damn

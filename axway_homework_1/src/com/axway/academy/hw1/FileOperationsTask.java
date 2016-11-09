@@ -17,28 +17,42 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
 
-public class HomeworkTask1 {
+public class FileOperationsTask {
+	
+	final static String propertiesFileName = "Properties.txt";
+	final static String newLine = System.getProperty("line.separator");
 
+	/**
+	 * Program to find and replace word/words from Properties file to clients file
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in, "UTF-8");
 		System.out.println("Enter file name:");
 		String fileName = input.nextLine();
-		StringBuilder sb = readFiles(fileName, "Properties.txt");
-		fileName = changeFileName(fileName);
-		writeFile(sb, fileName);
-		System.out.println("Done saving file.");
+		StringBuilder sb = readFiles(fileName);
+		String newFileName = changeFileName(fileName);
+		writeFile(sb, newFileName, fileName);
 		input.close();
 	}
-
-	public static StringBuilder readFiles(String fileName, String propertiesFileName) {
+	
+	/**
+	 * reads from properties file to get the words to be replaced
+	 * search the words in the clients file and replace them
+	 * @return
+	 */
+	public static StringBuilder readFiles(String fileName) {
 		Properties properties = new Properties();
 		File propertiesFile = new File(propertiesFileName);
 		InputStream propertiesStream = null;
-		
 		// Reading from properties file
 		try {
-			propertiesStream = new FileInputStream(propertiesFile);
-			properties.load(propertiesStream);
+			if (propertiesFile.exists() && propertiesFile.isFile() && !(propertiesFile.isDirectory())) {
+				propertiesStream = new FileInputStream(propertiesFile);
+				properties.load(propertiesStream);
+			} else {
+				System.out.println("");
+			}
 		} catch (FileNotFoundException e) {
 			System.out.println("Properties file not found:");
 			System.out.println(e.getMessage());
@@ -47,30 +61,36 @@ public class HomeworkTask1 {
 			System.out.println(e.getMessage());
 		}
 		
+		File f = new File(fileName);
 		FileReader fr = null;
 		BufferedReader br = null;
 		StringBuilder sb = new StringBuilder();
 		String line;
-		
 		// Reading from clients file
 		try {
-			fr = new FileReader(fileName);
-			br = new BufferedReader(fr);
-			
-			while ((line = br.readLine()) != null) {
-				Enumeration propertiesWords = properties.keys();
-				String originalWord = null;
-				String replacingWord = null;
+			if (!(f.isDirectory())) {
+				if (f.exists()) {
+					fr = new FileReader(fileName);
+					br = new BufferedReader(fr);
+					
+					while ((line = br.readLine()) != null) {
+						Enumeration propertiesWords = properties.keys();
+						String originalWord = null;
+						String replacingWord = null;
 
-				while ((originalWord = propertiesWords.nextElement().toString()) != null) {
-					replacingWord = properties.getProperty(originalWord);
-					line = line.replaceAll(originalWord, replacingWord);
-					if (!(propertiesWords.hasMoreElements())) {
-						break;
+						while ((originalWord = propertiesWords.nextElement().toString()) != null) {
+							if (line.contains(originalWord)) {
+								replacingWord = properties.getProperty(originalWord);
+								line = line.replaceAll(originalWord, replacingWord);
+							}
+							if (!(propertiesWords.hasMoreElements())) {
+								break;
+							}
+						}
+						sb.append(line).append(newLine);
 					}
 				}
-				sb.append(line + System.getProperty("line.separator"));
-			}
+			}		
 		} catch (NoSuchElementException e) {
 			System.out.println("Error finding element:");
 			System.out.println(e.getMessage());
@@ -95,14 +115,22 @@ public class HomeworkTask1 {
 		}
 		return sb;
 	}
-
-	public static void writeFile(StringBuilder text, String fileName) {
+	
+	/**
+	 * writing to a new file with the new filename
+	 * @param text
+	 */
+	public static void writeFile(StringBuilder text, String newFileName, String fileName) {
+		File f = new File(fileName);
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		try {
-			fw = new FileWriter(fileName);
+			if (f.exists() && !(f.isDirectory())) {
+			fw = new FileWriter(newFileName);
 			bw = new BufferedWriter(fw);
 			bw.write(text.toString());
+			System.out.println("Done saving file.");
+			}
 		} catch (IOException e) {
 			System.out.println("Error reading from file:");
 			System.out.println(e.getMessage());
@@ -120,7 +148,11 @@ public class HomeworkTask1 {
 			}
 		}
 	}
-
+	
+	/**
+	 * returns the new full filename 
+	 * @return
+	 */
 	public static String changeFileName(String fileName) {
 		DateFormat dateFormat = new SimpleDateFormat("ddMMyyyy");
 		Date date = new Date();
@@ -130,9 +162,18 @@ public class HomeworkTask1 {
 		return newFileName;
 	}
 
-	public static String getFileNameWithoutExtension(String fileName) {
-		String[] name = fileName.split("[.]");
-		return name[0];
+	/**
+	 * if the file has extension, it removes it
+	 * return the filename without extension
+	 * @param fileName
+	 * @return
+	 */
+	public static String getFileNameWithoutExtension(String filename) {
+		File f = new File(filename);
+		String fileName = f.getName();
+		int last = fileName.lastIndexOf(".");
+		return last >= 1 ? fileName.substring(0, last) : fileName;
 	}
+
 
 }
