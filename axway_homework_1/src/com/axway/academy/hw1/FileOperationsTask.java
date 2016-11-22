@@ -18,12 +18,14 @@ import java.util.Properties;
 import java.util.Scanner;
 
 public class FileOperationsTask {
-	
+
 	final static String propertiesFileName = "Properties.txt";
 	final static String newLine = System.getProperty("line.separator");
 
 	/**
-	 * Program to find and replace word/words from Properties file to clients file
+	 * Program to find and replace word/words from Properties file to clients
+	 * file
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -35,10 +37,11 @@ public class FileOperationsTask {
 		writeFile(sb, newFileName, fileName);
 		input.close();
 	}
-	
+
 	/**
-	 * reads from properties file to get the words to be replaced
-	 * search the words in the clients file and replace them
+	 * reads from properties file to get the words to be replaced search the
+	 * words in the clients file and replace them
+	 * 
 	 * @return
 	 */
 	public static StringBuilder readFiles(String fileName) {
@@ -60,7 +63,7 @@ public class FileOperationsTask {
 			System.out.println("Error reading from properties file:");
 			System.out.println(e.getMessage());
 		}
-		
+
 		File f = new File(fileName);
 		FileReader fr = null;
 		BufferedReader br = null;
@@ -72,7 +75,7 @@ public class FileOperationsTask {
 				if (f.exists()) {
 					fr = new FileReader(fileName);
 					br = new BufferedReader(fr);
-					
+
 					while ((line = br.readLine()) != null) {
 						Enumeration propertiesWords = properties.keys();
 						String originalWord = null;
@@ -90,7 +93,7 @@ public class FileOperationsTask {
 						sb.append(line).append(newLine);
 					}
 				}
-			}		
+			}
 		} catch (NoSuchElementException e) {
 			System.out.println("Error finding element:");
 			System.out.println(e.getMessage());
@@ -115,21 +118,33 @@ public class FileOperationsTask {
 		}
 		return sb;
 	}
-	
+
 	/**
 	 * writing to a new file with the new filename
+	 * 
 	 * @param text
 	 */
 	public static void writeFile(StringBuilder text, String newFileName, String fileName) {
-		File f = new File(fileName);
+		File f1 = new File(fileName);
+		File f2 = new File(newFileName);
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		try {
-			if (f.exists() && !(f.isDirectory())) {
-			fw = new FileWriter(newFileName);
-			bw = new BufferedWriter(fw);
-			bw.write(text.toString());
-			System.out.println("Done saving file.");
+			if (f1.exists()) {
+				if (!(f2.exists())) {
+					if (!(f1.isDirectory()) && !(f2.isDirectory())) {
+						fw = new FileWriter(newFileName);
+						bw = new BufferedWriter(fw);
+						bw.write(text.toString());
+						System.out.println("Done saving file.");
+					} else {
+						System.out.println("The name exists as a directory.");
+					}
+				} else {
+					System.out.println("A file with that name already exists.");
+				}
+			} else {
+				System.out.println("A file with that name does not exist.");
 			}
 		} catch (IOException e) {
 			System.out.println("Error reading from file:");
@@ -148,23 +163,24 @@ public class FileOperationsTask {
 			}
 		}
 	}
-	
+
 	/**
-	 * returns the new full filename 
+	 * returns the new full filename
+	 * 
 	 * @return
 	 */
 	public static String changeFileName(String fileName) {
 		DateFormat dateFormat = new SimpleDateFormat("ddMMyyyy");
 		Date date = new Date();
-		String newFileName = getFileNameWithoutExtension(fileName) 
-				+ "_moddified_" + dateFormat.format(date).toString()
+		String newFileName = getFileNameWithoutExtension(fileName) + "_moddified_" + dateFormat.format(date).toString()
 				+ ".txt";
 		return newFileName;
 	}
 
 	/**
-	 * if the file has extension, it removes it
-	 * return the filename without extension
+	 * if the file has extension, it removes it return the filename without
+	 * extension
+	 * 
 	 * @param fileName
 	 * @return
 	 */
@@ -174,6 +190,4 @@ public class FileOperationsTask {
 		int last = fileName.lastIndexOf(".");
 		return last >= 1 ? fileName.substring(0, last) : fileName;
 	}
-
-
 }
