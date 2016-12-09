@@ -24,8 +24,10 @@ public class FileOperations {
 			Files.write(file, text);
 			System.out.println("Writing to file succeeded.");
 		} catch (IOException e) {
+			System.out.println("Error writing to file:" + e.getMessage());
 			e.printStackTrace();
 		} catch (Exception e) {
+			System.out.println("Error writing to file:" + e.getMessage());
 			e.printStackTrace();
 		}
 	}

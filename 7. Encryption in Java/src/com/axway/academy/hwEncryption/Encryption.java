@@ -6,6 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -35,7 +38,6 @@ public class Encryption implements Variables {
 	 *  private final String is used to generate the random String 
 	 */
 	private static final String SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
-	private static final String NEW_LINE = System.getProperty("line.separator");
 	static String fileNameInput;
 
 	/**
@@ -161,35 +163,23 @@ public class Encryption implements Variables {
 		System.out.println("Enter file name:");
 		Scanner scan = new Scanner(System.in, "UTF-8");
 		fileNameInput = scan.nextLine();
-		String text = null;
-
-		if (!fileNameInput.toLowerCase().endsWith(".txt")) {
-			fileNameInput = fileNameInput.concat(".txt");
-		}
-		File file = new File(fileNameInput);
-		File file2 = new File(fo.getCreatedFileName(RANDOM_STRING_KEY_FILE_NAME, fileNameInput));
-		File file3 = new File(fo.getCreatedFileName(PRIVATE_KEY_FILE_NAME, fileNameInput));
+		File fileToBeEncrypted = new File(fileNameInput);
+		File symmetricKeyFile = new File(fo.getCreatedFileName(RANDOM_STRING_KEY_FILE_NAME, fileNameInput));
+		File privateKeyFile = new File(fo.getCreatedFileName(PRIVATE_KEY_FILE_NAME, fileNameInput));
 		
 		//check if random_string_key_fileName.txt and private_key_fileName.txt exist
-		if (!file2.exists() && !file3.exists()) {
+		if (!symmetricKeyFile.exists() && !privateKeyFile.exists()) {
 			System.out.println("Encryption of the file was once done.");
 			return;
 		}
-		FileReader fr = null;
-		BufferedReader br = null;
-
+		
+		String fileContent = null;
+		byte[] text = null;
+		Path path = Paths.get(fileNameInput);
 		try {
-			if (file.exists() && !file.isDirectory()) {
-				fr = new FileReader(file);
-				br = new BufferedReader(fr);
-				StringBuilder sb = new StringBuilder();
-				
-				// reads each line of the file content
-				while ((text = br.readLine()) != null) {
-					sb.append(text);
-					sb.append(NEW_LINE);
-				}
-				String fileContent = sb.toString();
+			if (fileToBeEncrypted.exists() && !fileToBeEncrypted.isDirectory()) {
+				text = Files.readAllBytes(path);
+				fileContent = new String(text, "UTF-8");
 				fileContent = padTextToBeMultipleTo16(fileContent);
 				
 				//encrypts the file content
@@ -202,7 +192,7 @@ public class Encryption implements Variables {
 				encryptKeys(randomStringKey);
 				fo.printEncryptedText(fileNameInput);
 				System.out.println("Encrypted text hash code: " + encryptedText.hashCode());
-				System.out.println("Reading of file was successful.\nFile content: " + sb.toString());
+				System.out.println("Reading of file was successful.\nFile content: " + fileContent);
 			} else {
 				System.out.println("Encryption can't be performed.");
 			}
@@ -224,19 +214,7 @@ public class Encryption implements Variables {
 			System.out.println(e.getMessage());
 		} catch (BadPaddingException e) {
 			System.out.println(e.getMessage());
-		} finally {
-			// closing streams
-			try {
-				if (br != null) {
-					br.close();
-				}
-				if (fr != null) {
-					fr.close();
-				}
-			} catch (IOException ioe) {
-				System.out.println("Cannot close streams." + ioe);
-			}
-		}
+		} 
 	}
 
 }

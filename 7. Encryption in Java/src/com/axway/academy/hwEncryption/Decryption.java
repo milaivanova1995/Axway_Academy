@@ -123,22 +123,19 @@ public class Decryption implements Variables {
 		Scanner scan = new Scanner(System.in, "UTF-8");
 		System.out.println("Enter file name:");
 		fileNameInput = scan.nextLine();
-		if (!fileNameInput.toLowerCase().endsWith(".txt")) {
-			fileNameInput = fileNameInput.concat(".txt");
-		}
 		Path path = Paths.get(fileNameInput);
-		File file = new File(fileNameInput);
-		File file2 = new File(fo.getCreatedFileName(RANDOM_STRING_KEY_FILE_NAME, fileNameInput));
-		File file3 = new File(fo.getCreatedFileName(PRIVATE_KEY_FILE_NAME, fileNameInput));
+		File fileToBeDecrypted = new File(fileNameInput);
+		File symmetricKeyFile = new File(fo.getCreatedFileName(RANDOM_STRING_KEY_FILE_NAME, fileNameInput));
+		File privateKeyFile = new File(fo.getCreatedFileName(PRIVATE_KEY_FILE_NAME, fileNameInput));
 		//check if random_string_key_fileName.txt and private_key_fileName.txt exist
-		if (!file2.exists() && !file3.exists()) {
+		if (!symmetricKeyFile.exists() && !privateKeyFile.exists()) {
 			System.out.println("File was not encrypted. Decryption can't be performed.");
 			return;
 		}
 		
 		byte[] encryptedText;
 		try {
-			if (file.exists() && !file.isDirectory()) {
+			if (fileToBeDecrypted.exists() && !fileToBeDecrypted.isDirectory()) {
 				String decryptedRandomStringKey = decryptKeys();
 				encryptedText = Files.readAllBytes(path);
 				String decryptedText = decryptText(encryptedText, decryptedRandomStringKey);
