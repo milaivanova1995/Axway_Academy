@@ -1,4 +1,4 @@
-package com.axway.academy.hw1;
+package com.axway.academy.javaBasics;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
