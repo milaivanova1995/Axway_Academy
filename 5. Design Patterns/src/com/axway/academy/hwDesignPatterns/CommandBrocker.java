@@ -1,4 +1,4 @@
-package com.axway.academy.hw6;
+package com.axway.academy.hwDesignPatterns;
 
 import java.util.ArrayList;
 
@@ -7,7 +7,6 @@ import java.util.ArrayList;
  * @author Mila I
  *
  */
-
 public class CommandBrocker {
 	
 	/**

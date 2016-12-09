@@ -1,4 +1,4 @@
-package com.axway.academy.hw6;
+package com.axway.academy.hwDesignPatterns;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,10 +16,17 @@ import java.util.Enumeration;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 
+/**
+ * This class is used to handle the file operatons 
+ * such as reading files and writing files
+ * @author Mila I
+ *
+ */
 public class FileOperations {
 
-	private final static String propertiesFileName = "Properties.txt";
-	private final static String newLine = System.getProperty("line.separator");
+	static String sFileName;
+	private final static String PROPERTIES_FILE_NAME = "Properties.txt";
+	private final static String NEW_LINE = System.getProperty("line.separator");
 
 	/**
 	 * Reads from the properties file the pairs of words to be replaced Reads
@@ -29,9 +36,9 @@ public class FileOperations {
 	 *            - a String taken as a user input for the file name
 	 * @return
 	 */
-	public StringBuilder readFiles(String fileName) {
+	public StringBuilder readFiles() {
 		Properties properties = new Properties();
-		File propertiesFile = new File(propertiesFileName);
+		File propertiesFile = new File(PROPERTIES_FILE_NAME);
 		InputStream propertiesStream = null;
 		// Reading from properties file
 		try {
@@ -49,7 +56,7 @@ public class FileOperations {
 			System.out.println(e.getMessage());
 		}
 
-		File f = new File(fileName);
+		File f = new File(sFileName);
 		FileReader fr = null;
 		BufferedReader br = null;
 		StringBuilder sb = new StringBuilder();
@@ -58,7 +65,7 @@ public class FileOperations {
 		try {
 			if (!(f.isDirectory())) {
 				if (f.exists()) {
-					fr = new FileReader(fileName);
+					fr = new FileReader(sFileName);
 					br = new BufferedReader(fr);
 
 					while ((line = br.readLine()) != null) {
@@ -75,7 +82,7 @@ public class FileOperations {
 								break;
 							}
 						}
-						sb.append(line).append(newLine);
+						sb.append(line).append(NEW_LINE);
 					}
 				}
 			}
@@ -109,8 +116,9 @@ public class FileOperations {
 	 * 
 	 * @param text
 	 */
-	public void writeFile(StringBuilder text, String newFileName, String fileName) {
-		File f1 = new File(fileName);
+	public void writeFile() {
+		File f1 = new File(sFileName);
+		String newFileName = changeFileName();
 		File f2 = new File(newFileName);
 		FileWriter fw = null;
 		BufferedWriter bw = null;
@@ -120,7 +128,7 @@ public class FileOperations {
 					if (!(f1.isDirectory()) && !(f2.isDirectory())) {
 						fw = new FileWriter(newFileName);
 						bw = new BufferedWriter(fw);
-						bw.write(text.toString());
+						bw.write(readFiles().toString());
 						System.out.println("Done saving file.");
 					} else {
 						System.out.println("The name exists as a directory.");
@@ -154,10 +162,10 @@ public class FileOperations {
 	 * 
 	 * @return
 	 */
-	public String changeFileName(String fileName) {
+	private static String changeFileName() {
 		DateFormat dateFormat = new SimpleDateFormat("ddMMyyyy");
 		Date date = new Date();
-		String newFileName = getFileNameWithoutExtension(fileName) + "_moddified_" + dateFormat.format(date).toString()
+		String newFileName = getFileNameWithoutExtension() + "_moddified_" + dateFormat.format(date).toString()
 				+ ".txt";
 		return newFileName;
 	}
@@ -169,8 +177,8 @@ public class FileOperations {
 	 * @param fileName
 	 * @return
 	 */
-	public static String getFileNameWithoutExtension(String filename) {
-		File f = new File(filename);
+	private static String getFileNameWithoutExtension() {
+		File f = new File(sFileName);
 		String fileName = f.getName();
 		int last = fileName.lastIndexOf(".");
 		return last >= 1 ? fileName.substring(0, last) : fileName;

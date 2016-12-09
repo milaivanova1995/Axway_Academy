@@ -1,5 +1,10 @@
-package com.axway.academy.hw6;
+package com.axway.academy.hwDesignPatterns;
 
+/**
+ * This class represents the write command
+ * @author Mila I
+ *
+ */
 public class WriteCommand implements Command {
 
 	/**
@@ -7,20 +12,15 @@ public class WriteCommand implements Command {
 	 * and the command executes whatever method is needed from the object.
 	 */
 	private FileOperations fo;
-	String fileName;
 	String newFileName;
-	StringBuilder text;
 	
 	/**
 	 * Constructor
 	 * @param fo - FileOperatins object
 	 * @param fileName - a String taken as a user input for the file name
 	 */
-	public WriteCommand(FileOperations fo, String fn) {
+	public WriteCommand(FileOperations fo) {
 		this.fo = fo;
-		this.fileName = fn;
-		this.text = fo.readFiles(fn);
-		this.newFileName = fo.changeFileName(fn);
 	}
 
 	/**
@@ -28,6 +28,6 @@ public class WriteCommand implements Command {
 	 */
 	@Override
 	public void execute() {
-		fo.writeFile(text, newFileName, fileName);
+		fo.writeFile();
 	}
 }

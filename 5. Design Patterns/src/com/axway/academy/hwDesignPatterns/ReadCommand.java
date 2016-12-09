@@ -1,5 +1,10 @@
-package com.axway.academy.hw6;
+package com.axway.academy.hwDesignPatterns;
 
+/**
+ * This class represents the read command
+ * @author Mila I
+ *
+ */
 public class ReadCommand implements Command {
 	
 	/**
@@ -7,16 +12,14 @@ public class ReadCommand implements Command {
 	 * and the command executes whatever method is needed from the object.
 	 */
 	private FileOperations fo;
-	String fileName;
 	
 	/**
 	 * Constructor
 	 * @param fo - FileOperatins object
 	 * @param fileName - a String taken as a user input
 	 */
-	public ReadCommand(FileOperations fo, String fileName) {
+	public ReadCommand(FileOperations fo) {
 		this.fo = fo;
-		this.fileName = fileName;
 	}
 
 	/**
@@ -24,7 +27,7 @@ public class ReadCommand implements Command {
 	 */
 	@Override
 	public void execute() {
-		fo.readFiles(fileName);
+		fo.readFiles();
 	}
 	
 }
