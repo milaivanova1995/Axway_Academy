@@ -1,4 +1,4 @@
-package com.axway.academy.hw4;
+package com.axway.academy.JDBC;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,20 +6,42 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class HomeworkTask4 {
+/**
+ * Program to extract data from the database.
+ * Finds the youngest and the oldest person in the table
+ * and prints the information about them
+ * @author Mila I
+ *
+ */
+public class HomeworkJDBC {
+	
+	/**
+	 * Static final variables used to establish the connection with the database
+	 */
+	private static final String SDRIVER = "com.mysql.jdbc.Driver";
+	private static final String SURL = "jdbc:mysql://localhost:3306/axway_academy_4?autoReconnect=true&useSSL=false";
+	private static final String SUSERNAME = "root";
+	private static final String SPASS = "mila0103";
 
+	/**
+	 * Calls the execute(); method 
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		String driver = "com.mysql.jdbc.Driver";
-		String url = "jdbc:mysql://localhost:3306/axway_academy_4?autoReconnect=true&useSSL=false";
-		String username = "root";
-		String pass = "mila0103";
+		execute();
+	}
+	
+	/**
+	 * Connects to database ad calls the getPerson(); method
+	 */
+	public static void execute() {
 		Connection con = null;
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		try {
-			Class.forName(driver);
+			Class.forName(SDRIVER);
 			System.out.println("Connecting to database...");
-			con = DriverManager.getConnection(url, username, pass);
+			con = DriverManager.getConnection(SURL, SUSERNAME, SPASS);
 			System.out.println("Creating statement...");
 			String youngest = "select name, surname, birthdate from employees where birthdate = (select max(birthdate) from employees);";
 			String oldest = "select name, surname, birthdate from employees where birthdate = (select min(birthdate) from employees);";
@@ -50,7 +72,13 @@ public class HomeworkTask4 {
 
 	}
 
-	public static void getPerson(String sql, Connection con) throws SQLException {
+	/**
+	 * Gets the person's data dependent on the sql statement
+	 * @param sql - a String which represents the query
+	 * @param con
+	 * @throws SQLException
+	 */
+	private static void getPerson(String sql, Connection con) throws SQLException {
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		prepStmt = con.prepareStatement(sql);
