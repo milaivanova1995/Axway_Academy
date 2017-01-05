@@ -1,4 +1,4 @@
-package com.axway.academy.hw3;
+package com.axway.academy.hwHTTP;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,6 +14,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
@@ -25,23 +28,42 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-public class FirstTask {
+/**
+ * A program to connect to http://www.google.com and write the response to a
+ * file.
+ * 
+ * @author Mila I
+ *
+ */
+public class HttpTask {
 
-	public static void main(String[] args) { 
+	private static final String URL = "http://www.google.com";
+
+	/**
+	 * Executes the methods in the class. Connects to the chosen url and save
+	 * the response in a file.
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
 		installTrustManager();
 		StringBuilder sb = readFromResource();
 		String fileName = getFileName();
-		writeToFile(fileName, sb);
+		writeToFile(fileName, sb.toString());
 	}
 
-	// Install the all-trusting trust manager
+	/**
+	 * Install the all-trusting trust manager
+	 */
 	public static void installTrustManager() {
 		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 				return null;
 			}
+
 			public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 			}
+
 			public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 			}
 		} };
@@ -68,6 +90,11 @@ public class FirstTask {
 
 	}
 
+	/**
+	 * Reads the data from the resource
+	 * 
+	 * @return
+	 */
 	public static StringBuilder readFromResource() {
 		BufferedReader br = null;
 		InputStreamReader ir = null;
@@ -79,7 +106,7 @@ public class FirstTask {
 
 		try {
 			// initialize the resource
-			url = new URL("http://www.google.com");
+			url = new URL(URL);
 			connection = (HttpURLConnection) url.openConnection();
 
 			if (connection != null) {
@@ -102,10 +129,13 @@ public class FirstTask {
 				}
 			}
 		} catch (MalformedURLException e) {
+			System.out.println("URL error: " + e.getMessage());
 			e.printStackTrace();
 		} catch (ProtocolException e) {
+			System.out.println("Protocol error: " + e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
+			System.out.println("Input/Output error: " + e.getMessage());
 			e.printStackTrace();
 		} finally {
 			// close all streams
@@ -123,13 +153,18 @@ public class FirstTask {
 					connection.disconnect();
 				}
 			} catch (IOException e) {
-				System.out.println("Error closing streams.");
+				System.out.println("Error closing streams: " + e.getMessage());
 				e.printStackTrace();
 			}
 		}
 		return sb;
 	}
 
+	/**
+	 * A method to get the file name entered by the user
+	 * 
+	 * @return
+	 */
 	public static String getFileName() {
 		System.out.print("Enter file name: ");
 		Scanner scanner = new Scanner(System.in);
@@ -138,46 +173,54 @@ public class FirstTask {
 		return fileName;
 	}
 
-	public static void writeToFile(String fileName, StringBuilder sb) {
+	/**
+	 * 
+	 * @param fileName
+	 *            - String variable taken as a user input
+	 * @param sb
+	 */
+	public static void writeToFile(String fileName, String text) {
 		File file = new File(fileName);
-		OutputStream out = null;
-		OutputStreamWriter osw = null;
-		BufferedWriter bw = null;
-		if (!file.exists()) {
-			try {
-				out = new FileOutputStream(file);
-				osw = new OutputStreamWriter(out);
-				bw = new BufferedWriter(osw);
-				bw.write(sb.toString());
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				// close all streams
-				try {
-					if (bw != null) {
-						bw.close();
-					}
-					if (osw != null) {
-						osw.close();
-					}
-					if (out != null) {
-						out.close();
-					}
-				} catch (IOException e) {
-					System.out.println("Error closing streams.");
-					e.printStackTrace();
-				}
-				if (file.exists()) {
-					System.out.println("Writing succeeded!");
-				} else {
-					System.out.println("Writing failed!");
-				}
-			}
-		} else {
+		 OutputStream out = null;
+		 OutputStreamWriter osw = null;
+		 BufferedWriter bw = null;
+		if (file.exists()) {
 			System.out.println("A file with that name already exists!");
-		}	
+			return;
+		}
+
+		 try {
+		 out = new FileOutputStream(file);
+		 osw = new OutputStreamWriter(out);
+		 bw = new BufferedWriter(osw);
+		 bw.write(text);
+		 } catch (FileNotFoundException e) {
+		 e.printStackTrace();
+		 } catch (IOException e) {
+		 e.printStackTrace();
+		 } finally {
+		 // close all streams
+		 try {
+		 if (bw != null) {
+		 bw.close();
+		 }
+		 if (osw != null) {
+		 osw.close();
+		 }
+		 if (out != null) {
+		 out.close();
+		 }
+		 } catch (IOException e) {
+		 System.out.println("Error closing streams.");
+		 e.printStackTrace();
+		 }
+		 if (file.exists()) {
+		 System.out.println("Writing succeeded!");
+		 } else {
+		 System.out.println("Writing failed!");
+		 }
+		 }
+
 	}
 
 }

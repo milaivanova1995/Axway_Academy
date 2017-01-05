@@ -138,7 +138,7 @@ public class Decryption implements Variables {
 			if (fileToBeDecrypted.exists() && !fileToBeDecrypted.isDirectory()) {
 				String decryptedRandomStringKey = decryptKeys();
 				encryptedText = Files.readAllBytes(path);
-				String decryptedText = decryptText(encryptedText, decryptedRandomStringKey);
+				String decryptedText = decryptText(encryptedText, decryptedRandomStringKey).trim();
 				System.out.println("Decrypted text hash code: " + decryptedText.hashCode());
 				fo.writeToFile(decryptedText.getBytes(), fileNameInput);
 				

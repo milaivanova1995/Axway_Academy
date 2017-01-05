@@ -180,6 +180,7 @@ public class Encryption implements Variables {
 			if (fileToBeEncrypted.exists() && !fileToBeEncrypted.isDirectory()) {
 				text = Files.readAllBytes(path);
 				fileContent = new String(text, "UTF-8");
+				System.out.println("File content hash code: " + fileContent.hashCode());
 				fileContent = padTextToBeMultipleTo16(fileContent);
 				
 				//encrypts the file content
@@ -191,7 +192,6 @@ public class Encryption implements Variables {
 				// encrypts the random string key and the private key
 				encryptKeys(randomStringKey);
 				fo.printEncryptedText(fileNameInput);
-				System.out.println("Encrypted text hash code: " + encryptedText.hashCode());
 				System.out.println("Reading of file was successful.\nFile content: " + fileContent);
 			} else {
 				System.out.println("Encryption can't be performed.");
